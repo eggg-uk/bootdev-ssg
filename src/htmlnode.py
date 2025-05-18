@@ -4,17 +4,17 @@ class HTMLNode:
         self.value=value
         self.children=children
         self.props=props
-    
+
     def to_html(self):
         raise exception(NotImplementedError)
-    
+
     def props_to_html(self):
         html_props = ""
         for key,value in self.props.items():
             html_props = html_props + f' {key}="{value}"'
             # print(html_props)
         return html_props
-    
+
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
 
@@ -26,8 +26,8 @@ class HTMLNode:
 class LeafNode(HTMLNode):
     def __init__(self,tag,value,children=None,props=None):
         super().__init__(tag,value,None,props)
-        
-    
+
+
     def to_html(self):
         if self.value == None:
             raise ValueError("All leaf nodes must have a value")
@@ -39,7 +39,16 @@ class LeafNode(HTMLNode):
 class ParentNode(HTMLNode):
     def __init__(self,tag,children,value=None,props=None):
         super().__init__(tag,None,children,props)
-    
+
     def to_html(self):
-        if tag == None:
+        if self.tag == None:
+            raise ValueError("All parent nodes must have a tag")
+        if self.children == None:
+            raise ValueError("All parent nodes must have child nodes")
+        all_child_nodes = ""
+        for leaf in self.children:
+            all_child_nodes += leaf.to_html()
+        return f"<{self.tag}>{all_child_nodes}</{self.tag}>"
+
+
         pass
